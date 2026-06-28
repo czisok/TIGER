@@ -58,25 +58,17 @@ class Trainer(object):
         elif learner.lower() == "sgd":
             optimizer = optim.SGD(params, lr=learning_rate, weight_decay=weight_decay)
         elif learner.lower() == "adagrad":
-            optimizer = optim.Adagrad(
-                params, lr=learning_rate, weight_decay=weight_decay
-            )
+            optimizer = optim.Adagrad(params, lr=learning_rate, weight_decay=weight_decay)
             for state in optimizer.state.values():
                 for k, v in state.items():
                     if torch.is_tensor(v):
                         state[k] = v.to(self.device)
         elif learner.lower() == "rmsprop":
-            optimizer = optim.RMSprop(
-                params, lr=learning_rate, weight_decay=weight_decay
-            )
+            optimizer = optim.RMSprop(params, lr=learning_rate, weight_decay=weight_decay)
         elif learner.lower() == 'adamw':
-            optimizer = optim.AdamW(
-                params, lr=learning_rate, weight_decay=weight_decay
-            )
+            optimizer = optim.AdamW(params, lr=learning_rate, weight_decay=weight_decay)
         else:
-            self.logger.warning(
-                "Received unrecognized optimizer, set default Adam optimizer"
-            )
+            self.logger.warning("Received unrecognized optimizer, set default Adam optimizer")
             optimizer = optim.Adam(params, lr=learning_rate)
         return optimizer
 
@@ -86,8 +78,7 @@ class Trainer(object):
                                                            num_warmup_steps=self.warmup_steps,
                                                            num_training_steps=self.max_steps)
         else:
-            lr_scheduler = get_constant_schedule_with_warmup(optimizer=self.optimizer,
-                                                             num_warmup_steps=self.warmup_steps)
+            lr_scheduler = get_constant_schedule_with_warmup(optimizer=self.optimizer, num_warmup_steps=self.warmup_steps)
 
         return lr_scheduler
     def _check_nan(self, loss):
@@ -165,9 +156,7 @@ class Trainer(object):
         }
         torch.save(state, ckpt_path, pickle_protocol=4)
 
-        self.logger.info(
-            set_color("Saving current", "blue") + f": {ckpt_path}"
-        )
+        self.logger.info(set_color("Saving current", "blue") + f": {ckpt_path}")
 
         return ckpt_path
 
@@ -211,8 +200,7 @@ class Trainer(object):
                 if collision_rate < self.best_collision_rate:
                     self.best_collision_rate = collision_rate
                     cur_eval_step = 0
-                    self._save_checkpoint(epoch_idx, collision_rate=collision_rate,
-                                          ckpt_file=self.best_collision_ckpt)
+                    self._save_checkpoint(epoch_idx, collision_rate=collision_rate, ckpt_file=self.best_collision_ckpt)
                 else:
                     cur_eval_step += 1
 
@@ -246,10 +234,4 @@ class Trainer(object):
                     if old_save not in self.best_save_heap:
                         delete_file(old_save[1])
 
-
-
         return self.best_loss, self.best_collision_rate
-
-
-
-

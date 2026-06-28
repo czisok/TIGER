@@ -38,13 +38,7 @@ class VectorQuantizer(nn.Module):
         return z_q
 
     def init_emb(self, data):
-
-        centers = kmeans(
-            data,
-            self.n_e,
-            self.kmeans_iters,
-        )
-
+        centers = kmeans(data, self.n_e, self.kmeans_iters, )
         self.embedding.weight.data.copy_(centers)
         self.initted = True
 
@@ -68,6 +62,16 @@ class VectorQuantizer(nn.Module):
             self.init_emb(latent)
 
         # Calculate the L2 Norm between latent and Embedded weights
+        """
+        Calculate the L2 Norm between latent and Embedded weights
+        $$ || X - E ||^2 $$ 的向量计算法
+        下面是求距离的常用方法：
+        aa = torch.sum(latent**2, dim=1, keepdim=True) : [B, H] -> [B, 1]
+        bb = torch.sum(self.embedding.weight**2, dim=1)   : [N, H] -> [N]
+        aa + bb: 1. bb扩维到 [1, N], 2. aa广播为[B, N] (第0维进行广播), bb广播为[B, N] (第1维进行广播)
+        cc = 2 * torch.matmul(latent, self.embedding.weight.t()) : [B, H] x [N, H] -> [B, N]
+        distances = aa + bb - cc -> [B, N] : B个H维的input跟N个H维embedding的距离 [b, n] 表示第b个input跟第n个embedding的距离
+        """
         d = torch.sum(latent**2, dim=1, keepdim=True) + \
             torch.sum(self.embedding.weight**2, dim=1, keepdim=True).t()- \
             2 * torch.matmul(latent, self.embedding.weight.t())
@@ -84,7 +88,7 @@ class VectorQuantizer(nn.Module):
 
         # indices = torch.argmin(d, dim=-1)
 
-        x_q = self.embedding(indices).view(x.shape)
+        x_q = self.embedding(indices).view(x.shape)  # 找到最近的embedding center
 
         # compute loss for embedding
         commitment_loss = F.mse_loss(x_q.detach(), x)

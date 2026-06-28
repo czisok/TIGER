@@ -11,7 +11,7 @@ class RQVAE(nn.Module):
     def __init__(self,
                  in_dim=768,
                  # num_emb_list=[256,256,256,256],
-                 num_emb_list=None,
+                 num_emb_list=None,  # emb num of every vq
                  e_dim=64,
                  # layers=[512,256,128],
                  layers=None,
@@ -46,7 +46,8 @@ class RQVAE(nn.Module):
         self.encode_layer_dims = [self.in_dim] + self.layers + [self.e_dim]  # 定义每层layer的hidden num
         self.encoder = MLPLayers(layers=self.encode_layer_dims, dropout=self.dropout_prob, bn=self.bn)
 
-        self.rq = ResidualVectorQuantizer(num_emb_list, e_dim,
+        self.rq = ResidualVectorQuantizer(num_emb_list, 
+                                          e_dim,
                                           beta=self.beta,
                                           kmeans_init = self.kmeans_init,
                                           kmeans_iters = self.kmeans_iters,
@@ -57,23 +58,23 @@ class RQVAE(nn.Module):
         self.decoder = MLPLayers(layers=self.decode_layer_dims, dropout=self.dropout_prob,bn=self.bn)
 
     def forward(self, x, use_sk=True):
-        x = self.encoder(x)
-        x_q, rq_loss, indices = self.rq(x,use_sk=use_sk)
+        """_summary_
+
+        Args:
+            x [B, in_dim]
+            use_sk (bool, optional): _description_. Defaults to True.
+
+        Returns:
+            _type_: _description_
+        """
+        x = self.encoder(x)  # [B, e_dim]
+        x_q, rq_loss, indices = self.rq(x, use_sk=use_sk)
         out = self.decoder(x_q)
 
         return out, rq_loss, indices
 
     @torch.no_grad()
     def get_indices(self, xs, use_sk=False):
-        """_summary_
-
-        Args:
-            xs: [B, in_dim]
-            use_sk (bool, optional): _description_. Defaults to False.
-
-        Returns:
-            _type_: _description_
-        """
         x_e = self.encoder(xs)
         _, _, indices = self.rq(x_e, use_sk=use_sk)
         return indices

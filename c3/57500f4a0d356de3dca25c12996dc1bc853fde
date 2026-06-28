@@ -1,0 +1,40 @@
+rqvae/models/layers.py
+  s_29b74ddbed566b::t_a774cdccf3abe9 25
+  h_89bc17edd88fde 21,63
+rqvae/models/rqvae.py
+  s_87bb9b84c82f13::t_3ba2cd5e5ab6e1 71
+  h_89bc17edd88fde 46
+rqvae/trainer.py
+  h_89bc17edd88fde 95
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "c357500f4a0d356de3dca25c12996dc1bc853fde",
+  "prompts": {},
+  "humans": {
+    "h_89bc17edd88fde": {
+      "author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "sessions": {
+    "s_29b74ddbed566b": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-0850967e-0475-4247-aa16-95429e918c59",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    },
+    "s_87bb9b84c82f13": {
+      "agent_id": {
+        "tool": "trae-cue",
+        "id": "ai_tab-icr-7b912838-4284-4349-a4f1-28e66f3010c0",
+        "model": "default"
+      },
+      "human_author": "zhangbo.999 <zhangbo.999@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}

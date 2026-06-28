@@ -43,8 +43,8 @@ class RQVAE(nn.Module):
         self.sk_epsilons = sk_epsilons
         self.sk_iters = sk_iters
 
-        self.encode_layer_dims = [self.in_dim] + self.layers + [self.e_dim]
-        self.encoder = MLPLayers(layers=self.encode_layer_dims, dropout=self.dropout_prob,bn=self.bn)
+        self.encode_layer_dims = [self.in_dim] + self.layers + [self.e_dim]  # 定义每层layer的hidden num
+        self.encoder = MLPLayers(layers=self.encode_layer_dims, dropout=self.dropout_prob, bn=self.bn)
 
         self.rq = ResidualVectorQuantizer(num_emb_list, e_dim,
                                           beta=self.beta,
@@ -65,6 +65,15 @@ class RQVAE(nn.Module):
 
     @torch.no_grad()
     def get_indices(self, xs, use_sk=False):
+        """_summary_
+
+        Args:
+            xs: [B, in_dim]
+            use_sk (bool, optional): _description_. Defaults to False.
+
+        Returns:
+            _type_: _description_
+        """
         x_e = self.encoder(xs)
         _, _, indices = self.rq(x_e, use_sk=use_sk)
         return indices

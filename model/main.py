@@ -66,11 +66,7 @@ class TIGER(nn.Module):
               - loss (torch.Tensor)
               - logits (torch.Tensor)
       """
-      outputs = self.model(
-          input_ids=input_ids,
-          attention_mask=attention_mask,
-          labels=labels
-      )
+      outputs = self.model(input_ids=input_ids, attention_mask=attention_mask, labels=labels)
       return outputs.loss, outputs.logits
     
     def generate(self, input_ids: torch.Tensor, attention_mask: Optional[torch.Tensor] = None,  num_beams: int = 20, **kwargs):

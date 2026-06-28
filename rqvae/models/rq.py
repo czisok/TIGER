@@ -45,10 +45,10 @@ class ResidualVectorQuantizer(nn.Module):
         residual = x
         for quantizer in self.vq_layers:
             x_res, loss, indices = quantizer(residual, use_sk=use_sk)
-            residual = residual - x_res
-            x_q = x_q + x_res
+            residual = residual - x_res  # x_in - x_q 作为残差，用于下一层的编码
+            x_q = x_q + x_res  # 每层码本的x_q 累加起来，作为encoder的输入
 
-            all_losses.append(loss)
+            all_losses.append(loss)  # 每层码本的量化损失
             all_indices.append(indices)
 
         mean_losses = torch.stack(all_losses).mean()

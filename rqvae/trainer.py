@@ -112,16 +112,8 @@ class Trainer(object):
 
     @torch.no_grad()
     def _valid_epoch(self, valid_data):
-
         self.model.eval()
-
-        iter_data =tqdm(
-                valid_data,
-                total=len(valid_data),
-                ncols=100,
-                desc=set_color(f"Evaluate   ", "pink"),
-            )
-
+        iter_data =tqdm(valid_data, total=len(valid_data), ncols=100, desc=set_color(f"Evaluate   ", "pink"))
         indices_set = set()
         num_sample = 0
         for batch_idx, data in enumerate(iter_data):

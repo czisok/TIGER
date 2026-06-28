@@ -93,7 +93,7 @@ class VectorQuantizer(nn.Module):
         # compute loss for embedding
         commitment_loss = F.mse_loss(x_q.detach(), x)
         codebook_loss = F.mse_loss(x_q, x.detach())
-        loss = codebook_loss + self.beta * commitment_loss
+        loss = codebook_loss + self.beta * commitment_loss  # 量化损失
 
         # preserve gradients
         x_q = x + (x_q - x).detach()

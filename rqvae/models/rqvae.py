@@ -68,6 +68,11 @@ class RQVAE(nn.Module):
             _type_: _description_
         """
         x = self.encoder(x)  # [B, e_dim]
+        """
+        x_q: 每层码本emb的累加和，作为encoder的输入
+        rq_loss: 每层码本的量化损失的平均值
+        indices: 每个样本的码本索引
+        """
         x_q, rq_loss, indices = self.rq(x, use_sk=use_sk)
         out = self.decoder(x_q)
 
@@ -87,7 +92,6 @@ class RQVAE(nn.Module):
             loss_recon = F.l1_loss(out, xs, reduction='mean')
         else:
             raise ValueError('incompatible loss type')
-
+        # 总损失 = 重构损失 + 量化损失 * 权重
         loss_total = loss_recon + self.quant_loss_weight * quant_loss
-
         return loss_total, loss_recon
